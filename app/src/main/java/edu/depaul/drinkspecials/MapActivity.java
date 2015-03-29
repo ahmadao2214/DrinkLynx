@@ -6,6 +6,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -34,7 +35,7 @@ public class MapActivity extends FragmentActivity {
     private String provider;
     private LocationManager locationManager;
 
-    private static final float ZOOM_LEVEL = 18.0f;
+    private static final float ZOOM_LEVEL = 11.5f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +82,7 @@ public class MapActivity extends FragmentActivity {
 
         currentPosition = new LatLng(lat, lon);
 
-        mMap.addMarker(new MarkerOptions().position(currentPosition).title("CURRENT"));
+        //mMap.addMarker(new MarkerOptions().position(currentPosition).title("CURRENT"));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, ZOOM_LEVEL));
         Toast.makeText(getApplicationContext(), "lat: " + lat + " lon: " + lon, Toast.LENGTH_LONG).show();
 
@@ -104,16 +105,13 @@ public class MapActivity extends FragmentActivity {
                                 int bid = list.pop().intValue();
                                 StringBuilder sb = new StringBuilder();
                                 for(String special : HttpRequests.getBarSpecials(bid)){
-                                    sb.append(special + ",\n");
+                                    sb.append(special + " ");
                                 }
-
-
                                 mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lon)).title(barName).snippet(sb.toString()));
-
                             }
 
                         } catch (Exception e) {
-
+                            Log.e(TAG, e.toString());
                         }
                     }
                 });
