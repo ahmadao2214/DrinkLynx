@@ -9,18 +9,17 @@ import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
-
 import java.util.ArrayList;
 
 public class MapActivity extends FragmentActivity{
     private static final String TAG = "";
+    private static final float ZOOM_LEVEL = 11.5f;
     private GoogleMap mMap;
     private Location location;
     private LatLng currentPosition;
@@ -28,7 +27,6 @@ public class MapActivity extends FragmentActivity{
     private String provider;
     private LocationManager locationManager;
     private ArrayList<String> qString;
-    private static final float ZOOM_LEVEL = 11.5f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +44,8 @@ public class MapActivity extends FragmentActivity{
     }
 
     private void setUpMapIfNeeded() {
-        // Do a null check to confirm that we have not already instantiated the map.
-
         if (mMap == null) {
-            // Try to obtain the map from the SupportMapFragment.
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-            // Check if we were successful in obtaining the map.
             if (mMap != null) {
                 setUpMap();
             }
@@ -59,19 +53,10 @@ public class MapActivity extends FragmentActivity{
     }
 
     private void setUpMap() {
-
-        locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setPowerRequirement(Criteria.POWER_MEDIUM);
-
-        provider = locationManager.getBestProvider(criteria,true);
-        location = locationManager.getLastKnownLocation(provider);
+        setupLocation();
 
         double lat = location.getLatitude();
         double lon = location.getLongitude();
-
         currentPosition = new LatLng(lat, lon);
 
         mMap.addMarker(new MarkerOptions().position(currentPosition).title("CURRENT"));
@@ -111,5 +96,25 @@ public class MapActivity extends FragmentActivity{
                              }
                          }
                 );
-    }
+        }
+
+        public Criteria setupCriteria(){
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            criteria.setPowerRequirement(Criteria.POWER_MEDIUM);
+
+            return criteria;
+        }
+
+        public void setupLocation(){
+            locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+            provider = locationManager.getBestProvider(setupCriteria(),true);
+            location = locationManager.getLastKnownLocation(provider);
+        }
+
+        public void setCurrentPosition(){
+            double lat = location.getLatitude();
+            double lon = location.getLongitude();
+            currentPosition = new LatLng(lat, lon);
+        }
     }
