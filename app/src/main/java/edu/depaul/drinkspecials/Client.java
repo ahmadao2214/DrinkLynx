@@ -15,8 +15,8 @@ public class Client extends Activity implements Runnable {
     private static final String TAG = "";
     private static final String SERVER_IP = "192.168.1.11";
     private static final int SERVERPORT = 9999;
-    public static String currentLocation;
     public static double clientLatitude,clientLongitude;
+    public static String currentLocation;
     public static ArrayList<String> inputList, iList;
 
     public Client(double la, double ln){
@@ -33,11 +33,7 @@ public class Client extends Activity implements Runnable {
             DataInputStream input= new DataInputStream(client.getInputStream());
             BufferedReader in = new BufferedReader(new InputStreamReader(input));
 
-            currentLocation = "" + clientLatitude + " " + clientLongitude;
-
-            output.writeUTF(currentLocation);
-            Log.e(TAG, "SENT Current Position to server: " + currentLocation);
-
+            writeCurrentLocation(output);
             readServer(in);
             formatInput(inputList);
 
@@ -58,8 +54,14 @@ public class Client extends Activity implements Runnable {
         }
     }
 
+    public void writeCurrentLocation(DataOutputStream output)  throws IOException{
+        currentLocation = clientLatitude + " " + clientLongitude;
+        output.writeUTF(currentLocation);
+        Log.e(TAG, "SENT Current Position to server: " + currentLocation);
+    }
+
     public void readServer(BufferedReader in) throws IOException{
-        String inputLine = "";
+        String inputLine;
         inputList = new ArrayList<>();
         iList = new ArrayList<>();
         while((inputLine = in.readLine()) != null) {
@@ -69,10 +71,10 @@ public class Client extends Activity implements Runnable {
     }
 
     public void formatInput(ArrayList<String> inputList){
-        for(String s: inputList){
-            if(s!=null) {
-                String[] t = s.split(":");
-                for(String remove: t){
+        for(String line: inputList){
+            if(line!=null) {
+                String[] lineArray = line.split(":");
+                for(String remove: lineArray){
                     remove = remove.substring(2);
                     iList.add(remove);
                 }

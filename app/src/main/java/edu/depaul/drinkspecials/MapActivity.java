@@ -23,10 +23,8 @@ public class MapActivity extends FragmentActivity{
     private GoogleMap mMap;
     private Location location;
     private LatLng currentPosition;
-    private VisibleRegion cPP;
     private String provider;
     private LocationManager locationManager;
-    private ArrayList<String> qString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,33 +51,20 @@ public class MapActivity extends FragmentActivity{
     }
 
     private void setUpMap() {
-        setupLocation();
-
-        double lat = location.getLatitude();
-        double lon = location.getLongitude();
-        currentPosition = new LatLng(lat, lon);
-
-        mMap.addMarker(new MarkerOptions().position(currentPosition).title("CURRENT"));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, ZOOM_LEVEL));
-        Toast.makeText(getApplicationContext(), "lat: " + lat + " lon: " + lon, Toast.LENGTH_LONG).show();
+        getLocation();
+        getLatLong();
 
                 mMap.setOnMapClickListener(
                         new GoogleMap.OnMapClickListener() {
                             @Override
                             public void onMapClick(LatLng latLng) {
-                                cPP = mMap.getProjection().getVisibleRegion();
                                 double lat = currentPosition.latitude;
                                 double lng = currentPosition.longitude;
 
                                 new Thread(new Client(lat,lng)).start();
-
-
-                                qString = Client.getIList();
-
-                                if(qString!=null) {
-                                    for (String s : qString) {
+                                if(Client.getIList()!=null) {
+                                    for (String s : Client.getIList()) {
                                         Log.e(TAG, "Input ArrayList received from serverIS NOT NULL " + s);
-                                        //s = s.substring(2);
                                         String[] spl = s.split(";");
                                         String[] cords = spl[0].split(",");
                                         lat = Double.parseDouble(cords[0]);
@@ -102,19 +87,25 @@ public class MapActivity extends FragmentActivity{
             Criteria criteria = new Criteria();
             criteria.setAccuracy(Criteria.ACCURACY_FINE);
             criteria.setPowerRequirement(Criteria.POWER_MEDIUM);
-
             return criteria;
         }
 
-        public void setupLocation(){
+        public void getLocation(){
             locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
             provider = locationManager.getBestProvider(setupCriteria(),true);
             location = locationManager.getLastKnownLocation(provider);
         }
 
-        public void setCurrentPosition(){
+        public void getLatLong(){
             double lat = location.getLatitude();
             double lon = location.getLongitude();
+            getCurrentPosition(lat, lon);
+        }
+
+        public void getCurrentPosition(double lat, double lon){
             currentPosition = new LatLng(lat, lon);
+            mMap.addMarker(new MarkerOptions().position(currentPosition).title("CURRENT"));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, ZOOM_LEVEL));
+            Toast.makeText(getApplicationContext(), "lat: " + lat + " lon: " + lon, Toast.LENGTH_LONG).show();
         }
     }
