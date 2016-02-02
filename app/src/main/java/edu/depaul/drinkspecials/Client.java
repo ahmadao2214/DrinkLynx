@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class Client extends Activity implements Runnable {
     private static final String TAG = "";
-    private static final String SERVER_IP = "192.168.1.11";
+    private static final String SERVER_IP = "9999";
     private static final int SERVERPORT = 9999;
     public static double clientLatitude,clientLongitude;
     public static String currentLocation;

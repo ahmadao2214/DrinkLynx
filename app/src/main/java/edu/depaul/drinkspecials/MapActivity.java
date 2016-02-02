@@ -14,8 +14,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.VisibleRegion;
-import java.util.ArrayList;
 
 public class MapActivity extends FragmentActivity{
     private static final String TAG = "";
